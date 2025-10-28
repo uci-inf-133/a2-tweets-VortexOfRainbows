@@ -16,6 +16,8 @@ So far, 3.5 hours
 I mostly consulted the resources that were posted in the assignment, like documentation for certain JavaScript functions. However, I also looked up simple things like the syntax for things like "foreach" in JavaScript, where the exact resource I consulted doesn't really matter (I already knew how to do what was needed, but am unfamiliar with JS syntax in particular)
 Another thing I looked up was how to add a listener to button presses, where I used the top result to guide me.
 
+I also used Vega documentation to sort my graphs better: https://vega.github.io/vega-lite/docs/sort.html
+
 4. What classmates or other individuals did you consult as part of this assignment? What did you discuss?
 
 

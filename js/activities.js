@@ -106,18 +106,21 @@ function parseTweets(runkeeper_tweets) {
 
 
 	const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	let superDictionary = [];
+	let superDictionary = [{ "Time (Day)": "Monday", "Distance": 0, "Activity": "bike"}];
 	i = 0;
 	tweet_array.forEach(function (tweet) {
-		superDictionary[i++] = {
-			"Time (Day)": days[tweet.time.getDay()],
-			"Distance": tweet.distance,
-			"Activity": tweet.activityType,
-		};
+		var t = tweet.activityType;
+		if (t == bestName || t == secondBestName || t == thirdBestName)
+			superDictionary[i++] = {
+				"Time (Day)": days[tweet.time.getDay()],
+				"Distance": tweet.distance,
+				"Activity": tweet.activityType,
+			};
 	});
 
 	//TODO: create the visualizations which group the three most-tweeted activities
 	//by the day of the week.
+	var aggregateType = "sort";
 	activity_vis_spec = {
 		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 		"description": "A graph of the number of Tweets containing each type of activity.",
@@ -129,9 +132,11 @@ function parseTweets(runkeeper_tweets) {
 			"x": {
 				"field": "Time (Day)",
 				"type": "nominal",
-				"scale": { "zero": false }, "axis": { "labelAngle": 50 } 
+				"scale": { "zero": false }, "axis": { "labelAngle": 50 },
+				"sort": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 			},
 			"y": {
+				"aggregate": aggregateType,
 				"field": "Distance",
 				"type": "quantitative",
 				"scale": { "zero": false }
