@@ -10,11 +10,11 @@ class Tweet {
 	//returns either 'live_event', 'achievement', 'completed_event', or 'miscellaneous'
     get source():string {
         //TODO: identify whether the source is a live event, an achievement, a completed event, or miscellaneous.
-        if (this.text.startsWith("Just completed") || this.text.startsWith("Just posted")) {
-            return "completed";
+        if (this.text.startsWith("Just completed a ") || this.text.startsWith("Just posted")) {
+            return "completed_event";
         }
         if (this.text.includes("right now")) {
-            return "live event";
+            return "live_event";
         }
         if (this.text.startsWith("Achieved")) {
             return "achievement";
@@ -31,24 +31,59 @@ class Tweet {
         if(!this.written) {
             return "";
         }
-        //TODO: parse the written text from the tweet
-        return "";
+        var endOfWrittenSection = this.text.indexOf("https://t.co");
+        var startOfWrittenSection = this.text.indexOf(" - ");
+        if (startOfWrittenSection < 0)
+            startOfWrittenSection = 0;
+        if (endOfWrittenSection < 0)
+            endOfWrittenSection = 0;
+        return this.text.substring(startOfWrittenSection, endOfWrittenSection);
     }
 
     get activityType():string {
         if (this.source != 'completed_event') {
             return "unknown";
         }
-        //TODO: parse the activity type from the text of the tweet
-        return "";
+        if (this.text.includes(" walk "))
+            return "walk";
+        if (this.text.includes(" run "))
+            return "run";
+        if (this.text.includes(" bike "))
+            return "bike";
+        if (this.text.includes(" row "))
+            return "row";
+        if (this.text.includes(" workout "))
+            return "workout";
+        //if (this.text.includes(" elliptical workout "))
+        //    return "elliptical";
+        if (this.text.includes(" skate "))
+            return "skate";
+        if (this.text.includes(" swim "))
+            return "swim";
+        return "other";
     }
 
     get distance():number {
         if(this.source != 'completed_event') {
             return 0;
         }
-        //TODO: prase the distance from the text of the tweet
-        return 0;
+        var isKM = true;
+        var start = "Just posted a ".length;
+        if (this.text.startsWith("Just completed a ")) {
+            start = "Just completed a ".length;
+        }
+        var end = this.text.indexOf(" km ");
+        if (end < 0) {
+            isKM = false;
+            end = this.text.indexOf(" mi ");
+        }
+        var sub = this.text.substring(start, end);
+        var dist = parseInt(sub);
+        if (isKM)
+            dist /= 1.609;
+        if (isNaN(dist))
+            return NaN;
+        return dist;
     }
 
     getHTMLTableRow(rowNumber:number):string {

@@ -19,16 +19,17 @@ function parseTweets(runkeeper_tweets) {
 	var totalWritten = 0;
 
 	tweet_array.forEach(function(tweet) {
-		if (tweet.source == "completed")
+		if (tweet.source == "completed_event") {
+			if (tweet.written)
+				totalWritten++;
 			completedEvents++;
+		}
 		else if (tweet.source == "achievement")
 			achieveEvents++;
-		else if (tweet.source == "live event")
+		else if (tweet.source == "live_event")
 			liveEvents++;
 		else
 			miscEvents++;
-		if (tweet.written) 
-			totalWritten++;
 	});
 
 	function toPercent(val, outOf) {
