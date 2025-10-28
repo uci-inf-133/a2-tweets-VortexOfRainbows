@@ -67,13 +67,13 @@ function parseTweets(runkeeper_tweets) {
 		}
 	});
 	Object.keys(dists).forEach(function (key) {
-		if (fourthBest < dists[key]) {
+		if (fourthBest < dists[key] && (key == bestName || key == secondBestName || key == thirdBestName)) {
 			fourthBest = dists[key];
 			longestDistName = key;
 		}
 	});
 	Object.keys(dists).forEach(function (key) {
-		if (fifthBest > dists[key] || fifthBest == -1) {
+		if ((fifthBest > dists[key] || fifthBest == -1) && (key == bestName || key == secondBestName || key == thirdBestName)) {
 			fifthBest = dists[key];
 			shortestDistName = key;
 		}
@@ -88,7 +88,20 @@ function parseTweets(runkeeper_tweets) {
 		countDictionary[i++] = { "Activity Type": key, "Number of Tweets": counts[key]};
 	});
 	document.getElementById("aggregate").addEventListener("click", function () {
-		alert("Button clicked!");
+		activity_vis_spec = {
+			"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+			"description": "A graph of the number of Tweets containing each type of activity.",
+			"data": {
+				"values": countDictionary
+			},
+			"mark": "point",
+			"encoding": {
+				"x": { "field": "Activity Type", "type": "nominal", "axis": { "labelAngle": 50 } },
+				"y": { "aggregate": "mean", "field": "Number of Tweets", "type": "quantitative" }
+			},
+			"autosize": "pad"
+		};
+		vegaEmbed('#activityVis', activity_vis_spec, { actions: false });
 	});
 
 	activity_vis_spec = {
