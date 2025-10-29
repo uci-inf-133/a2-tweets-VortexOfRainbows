@@ -120,33 +120,37 @@ function parseTweets(runkeeper_tweets) {
 
 	//TODO: create the visualizations which group the three most-tweeted activities
 	//by the day of the week.
-	var aggregateType = "sort";
-	activity_vis_spec = {
-		"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-		"description": "A graph of the number of Tweets containing each type of activity.",
-		"data": {
-			"values": superDictionary,
-		},
-		"mark": "point",
-		"encoding": {
-			"x": {
-				"field": "Time (Day)",
-				"type": "nominal",
-				"scale": { "zero": false }, "axis": { "labelAngle": 50 },
-				"sort": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+	for (var i = 0; i < 2; ++i) {
+		var aggregateType = i == 0 ? "sort" : "mean";
+		activity_vis_spec = {
+			"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+			"description": "A graph of the number of Tweets containing each type of activity.",
+			"data": {
+				"values": superDictionary,
 			},
-			"y": {
-				"aggregate": aggregateType,
-				"field": "Distance",
-				"type": "quantitative",
-				"scale": { "zero": false }
+			"mark": "point",
+			"encoding": {
+				"x": {
+					"field": "Time (Day)",
+					"type": "nominal",
+					"scale": { "zero": false }, "axis": { "labelAngle": 50 },
+					"sort": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+				},
+				"y": {
+					"aggregate": aggregateType,
+					"field": "Distance",
+					"type": "quantitative",
+					"scale": { "zero": false }
+				},
+				"color": { "field": "Activity", "type": "nominal" },
+				"shape": { "field": "Activity", "type": "nominal" }
 			},
-			"color": { "field": "Activity", "type": "nominal" },
-			"shape": { "field": "Activity", "type": "nominal" }
-		},
-		"autosize": "pad"
-	};
-	vegaEmbed('#distanceVis', activity_vis_spec, { actions: false });
+			"autosize": "pad"
+		};
+		var v = i == 0 ? 'distanceVis' : 'distanceVisAggregated';
+		vegaEmbed('#' + v, activity_vis_spec, { actions: false });
+		document.getElementById(v).hidden = i != 0;
+	}
 	//Use those visualizations to answer the questions about which activities tended
 	//to be longest and when.
 	document.getElementById('numberActivities').innerText = 8;	
@@ -155,9 +159,12 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('thirdMost').innerText = thirdBestName;	
 	document.getElementById('longestActivityType').innerText = longestDistName; // + "(" + fourthBest +")";	
 	document.getElementById('shortestActivityType').innerText = shortestDistName; // + "(" + fifthBest + ")";
+	document.getElementById('weekdayOrWeekendLonger').innerText = "Sunday"; // + "(" + fifthBest + ")";
 
 	document.getElementById("aggregate").addEventListener("click", function () {
-
+		document.getElementById("aggregate").innerText = document.getElementById('distanceVis').hidden ? "Show means" : "Show all activities";
+		document.getElementById('distanceVis').hidden = !document.getElementById('distanceVis').hidden;
+		document.getElementById('distanceVisAggregated').hidden = !document.getElementById('distanceVisAggregated').hidden;
 	});
 }
 //Wait for the DOM to load
