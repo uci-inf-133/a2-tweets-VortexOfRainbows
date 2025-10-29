@@ -16,10 +16,15 @@ function parseTweets(runkeeper_tweets) {
 function addEventHandlerForSearch() {
 	var searchString = document.getElementById('textFilter').value;
 	var total = 0;
+	var table = document.getElementById('tweetTable');
+	table.innerText = '';
 	if (tweet_array != undefined && searchString != '') {
 		tweet_array.forEach(function (tweet) {
-			if (tweet.written && tweet.writtenText.includes(searchString))
+			if (tweet.writtenText.includes(searchString)) {
+				var row = table.insertRow(-1);
+				row.innerHTML = tweet.getHTMLTableRow(total);
 				total++;
+			}
 		});
 	}
 	document.getElementById('searchCount').innerText = total;
@@ -28,6 +33,7 @@ function addEventHandlerForSearch() {
 //Wait for the DOM to load
 document.addEventListener('DOMContentLoaded', function (event) {
 	const input = document.getElementById("textFilter");
+	document.getElementById('textFilter').value = '';
 	input.addEventListener("keyup", function () {
 		addEventHandlerForSearch();
 	});
